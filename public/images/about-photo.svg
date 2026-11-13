@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1200" viewBox="0 0 960 1200" fill="none" role="img" aria-label="Placeholder foto BookStore">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="960" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="120" y1="180" x2="520" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#2563EB" stop-opacity=".10"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="1200" rx="0" fill="url(#bg)"/>
+  <circle cx="720" cy="220" r="220" fill="#2563EB" fill-opacity=".06"/>
+  <circle cx="180" cy="980" r="260" fill="#0F172A" fill-opacity=".04"/>
+  <rect x="170" y="260" width="620" height="680" rx="28" fill="url(#accent)" stroke="#CBD5E1" stroke-opacity=".7"/>
+  <rect x="250" y="380" width="340" height="18" rx="9" fill="#0F172A" fill-opacity=".12"/>
+  <rect x="250" y="430" width="460" height="14" rx="7" fill="#0F172A" fill-opacity=".08"/>
+  <rect x="250" y="464" width="420" height="14" rx="7" fill="#0F172A" fill-opacity=".08"/>
+  <rect x="250" y="498" width="360" height="14" rx="7" fill="#0F172A" fill-opacity=".08"/>
+  <g opacity=".9">
+    <rect x="250" y="600" width="120" height="170" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+    <rect x="392" y="580" width="120" height="190" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+    <rect x="534" y="610" width="120" height="160" rx="10" fill="#FFFFFF" stroke="#CBD5E1"/>
+    <rect x="270" y="625" width="80" height="8" rx="4" fill="#2563EB" fill-opacity=".35"/>
+    <rect x="412" y="605" width="80" height="8" rx="4" fill="#0F172A" fill-opacity=".18"/>
+    <rect x="554" y="635" width="80" height="8" rx="4" fill="#2563EB" fill-opacity=".25"/>
+  </g>
+  <text x="480" y="1065" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#64748B" letter-spacing="2">FOTO BOOKSTORE</text>
+  <text x="480" y="1102" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#94A3B8">Ganti dengan foto Anda: public/images/about-photo.svg atau .jpg</text>
+</svg>
