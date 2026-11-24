@@ -33,8 +33,8 @@
                 @csrf
 
                 <div class="form-group">
-                    <label class="form-label required">Judul Buku</label>
-                    <input type="text" name="title" value="{{ old('title') }}" class="form-control" placeholder="Contoh: Filosofi Teras" required autofocus>
+                    <label class="form-label required">Judul Buku <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                    <input type="text" name="title" value="{{ old('title') }}" maxlength="50" class="form-control" placeholder="Contoh: Filosofi Teras" required autofocus>
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -51,21 +51,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label required">Penulis / Pengarang</label>
-                        <input type="text" name="author" value="{{ old('author') }}" class="form-control" placeholder="Contoh: Henry Manampiring" required>
+                        <label class="form-label required">Penulis / Pengarang <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                        <input type="text" name="author" value="{{ old('author') }}" maxlength="50" class="form-control" placeholder="Contoh: Henry Manampiring" required>
                     </div>
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">Penerbit</label>
-                        <input type="text" name="publisher" value="{{ old('publisher') }}" class="form-control" placeholder="Contoh: Kompas Gramedia">
+                        <label class="form-label">Penerbit <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                        <input type="text" name="publisher" value="{{ old('publisher') }}" maxlength="50" class="form-control" placeholder="Contoh: Kompas Gramedia">
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label class="form-label">Nomor ISBN</label>
-                        <input type="text" name="isbn" value="{{ old('isbn') }}" class="form-control" placeholder="Contoh: 978-602-412-518-9">
-                    </div>
+                        <input type="text" name="isbn" value="{{ old('isbn') }}" maxlength="50" class="form-control" placeholder="Contoh: 978-602-412-518-9">
+                    </div> -->
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;">

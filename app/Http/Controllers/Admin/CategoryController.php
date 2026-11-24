@@ -21,11 +21,16 @@ class CategoryController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // Enforce maximum 50 categories limit
+        if (Category::count() >= 50) {
+            return back()->withInput()->with('error', 'Jumlah kategori buku sudah mencapai batas maksimal (50 kategori). Silakan kelola atau hapus kategori yang sudah ada.');
+        }
+
         $validated = $request->validate([
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('categories', 'name')->withoutTrashed(),
             ],
             'description' => [
@@ -36,6 +41,7 @@ class CategoryController extends Controller
             ],
         ], [
             'name.required' => 'Nama kategori wajib diisi.',
+            'name.max' => 'Nama kategori maksimal 50 karakter/huruf.',
             'name.unique' => 'Nama kategori sudah terdaftar atau duplikat. Silakan gunakan nama lain.',
             'description.unique' => 'Deskripsi kategori ini sudah ada atau duplikat pada kategori lain. Silakan gunakan deskripsi yang berbeda.',
         ]);
@@ -58,7 +64,7 @@ class CategoryController extends Controller
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('categories', 'name')->ignore($category->id)->withoutTrashed(),
             ],
             'description' => [
@@ -69,6 +75,7 @@ class CategoryController extends Controller
             ],
         ], [
             'name.required' => 'Nama kategori wajib diisi.',
+            'name.max' => 'Nama kategori maksimal 50 karakter/huruf.',
             'name.unique' => 'Nama kategori sudah terdaftar atau duplikat. Silakan gunakan nama lain.',
             'description.unique' => 'Deskripsi kategori ini sudah ada atau duplikat pada kategori lain. Silakan gunakan deskripsi yang berbeda.',
         ]);

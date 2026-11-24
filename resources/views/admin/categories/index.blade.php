@@ -7,8 +7,11 @@
 <div class="d-grid" style="grid-template-columns: 2fr 1.2fr; gap: 24px; align-items: flex-start;">
     <!-- Categories List Card -->
     <div class="card" style="border-radius: var(--radius-md);">
-        <div class="card-header">
+        <div class="card-header d-flex justify-between align-center">
             <h3 class="card-title">🏷️ Daftar Kategori Buku</h3>
+            <span class="badge {{ $categories->count() >= 50 ? 'badge-danger' : 'badge-primary' }}">
+                {{ $categories->count() }} / 50 Kategori
+            </span>
         </div>
         <div class="card-body" style="padding: 0;">
             <div class="table-responsive">
@@ -77,11 +80,17 @@
             <h3 class="card-title">+ Tambah Kategori Baru</h3>
         </div>
         <div class="card-body">
+            @if($categories->count() >= 50)
+                <div class="alert alert-warning mb-3 text-xs">
+                    ⚠️ <strong>Batas Maksimal Tercapai:</strong> Jumlah kategori buku sudah mencapai batas 50 kategori. Untuk menambahkan kategori baru, hapus kategori yang tidak digunakan.
+                </div>
+            @endif
+
             <form action="{{ route('admin.categories.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label class="form-label required">Nama Kategori</label>
-                    <input type="text" name="name" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" placeholder="Contoh: Komik &amp; Manga" required>
+                    <label class="form-label required">Nama Kategori <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                    <input type="text" name="name" value="{{ old('name') }}" maxlength="50" class="form-control @error('name') is-invalid @enderror" placeholder="Contoh: Komik &amp; Manga" required {{ $categories->count() >= 50 ? 'disabled' : '' }}>
                     @error('name')
                         <div class="text-xs text-danger mt-1">⚠️ {{ $message }}</div>
                     @enderror
@@ -89,13 +98,13 @@
 
                 <div class="form-group">
                     <label class="form-label">Deskripsi Kategori (Opsional)</label>
-                    <textarea name="description" rows="3" class="form-control @error('description') is-invalid @enderror" placeholder="Penjelasan singkat tentang buku dalam kategori ini...">{{ old('description') }}</textarea>
+                    <textarea name="description" rows="3" class="form-control @error('description') is-invalid @enderror" placeholder="Penjelasan singkat tentang buku dalam kategori ini..." {{ $categories->count() >= 50 ? 'disabled' : '' }}>{{ old('description') }}</textarea>
                     @error('description')
                         <div class="text-xs text-danger mt-1">⚠️ {{ $message }}</div>
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block">
+                <button type="submit" class="btn btn-primary btn-block" {{ $categories->count() >= 50 ? 'disabled' : '' }}>
                     Simpan Kategori Baru
                 </button>
             </form>
@@ -115,8 +124,8 @@
             @method('PUT')
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label required">Nama Kategori</label>
-                    <input type="text" name="name" id="editCatName" class="form-control" required>
+                    <label class="form-label required">Nama Kategori <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                    <input type="text" name="name" id="editCatName" maxlength="50" class="form-control" required>
                 </div>
 
                 <div class="form-group">

@@ -122,12 +122,14 @@
                         <span>{{ auth()->user()->name }}</span>
                     </div>
 
-                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Logout">
-                            🚪 Keluar
-                        </button>
-                    </form>
+                    <form action="{{ route('logout') }}" method="POST"
+      style="margin: 0;"
+      onsubmit="return confirm('Yakin ingin logout dari akun ini?');"> 
+    @csrf
+    <button type="submit" class="btn btn-sm btn-outline-danger" title="Logout">
+        🚪 Keluar
+    </button>
+</form>
                 </div>
             </header>
 

@@ -27,7 +27,7 @@
                     @csrf
                     <div class="form-group">
                         <label class="form-label required">Alamat Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="nama@email.com" required autofocus>
+                        <input type="text" name="email" value="{{ old('email') }}" class="form-control" placeholder="Contoh: Budi Santoso@gmail.com" required autofocus>
                     </div>
 
                     <div class="form-group">
@@ -53,10 +53,10 @@
                 <div style="margin-top: 24px; padding: 14px; background-color: #f8fafc; border-radius: var(--radius-sm); border: 1px dashed #cbd5e1; font-size: 0.82rem;">
                     <div style="font-weight: 700; color: var(--text-main); margin-bottom: 6px;">💡 Akun Demo untuk Testing:</div>
                     <div style="margin-bottom: 4px;">
-                        <strong>Admin:</strong> <code>admin@bookstore.com</code> / <code>password</code>
+                        <strong>Admin:</strong> <code>Admin Bookstore</code> / <code>password</code>
                     </div>
                     <div>
-                        <strong>Pembeli:</strong> <code>user@bookstore.com</code> / <code>password</code>
+                        <strong>Pembeli:</strong> <code>User Demo</code> / <code>password</code>
                     </div>
                 </div>
 

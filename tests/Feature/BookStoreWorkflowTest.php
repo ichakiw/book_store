@@ -278,19 +278,170 @@ class BookStoreWorkflowTest extends TestCase
         $responseDuplicateIsbn->assertSessionHasErrors('isbn');
     }
 
-    public function test_admin_access_control_rules(): void
+    public function test_category_name_and_total_category_limit_50(): void
     {
-        $user = User::where('role', 'user')->first();
+        $admin = User::where('role', 'admin')->first();
 
-        // 1. Unauthenticated user (guest) to admin dashboard -> 401 Unauthorized
-        $responseGuest = $this->get('/admin/dashboard');
-        $responseGuest->assertStatus(401);
-        $responseGuest->assertSee('Unauthorized');
+        // 1. Name longer than 50 characters is rejected
+        $longName = str_repeat('A', 51);
+        $responseLongName = $this->actingAs($admin)->post('/admin/kategori', [
+            'name' => $longName,
+            'description' => 'Deskripsi valid',
+        ]);
+        $responseLongName->assertSessionHasErrors('name');
 
-        // 2. Logged in customer to admin dashboard -> 403 Forbidden (Access Denied)
-        $responseUser = $this->actingAs($user)->get('/admin/dashboard');
-        $responseUser->assertStatus(403);
-        $responseUser->assertSee('Access Denied');
+        // 2. Name with exactly 50 characters is accepted
+        $valid50Name = str_repeat('B', 50);
+        $responseValid = $this->actingAs($admin)->post('/admin/kategori', [
+            'name' => $valid50Name,
+            'description' => 'Deskripsi valid',
+        ]);
+        $responseValid->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('categories', ['name' => $valid50Name]);
+
+        // 3. Category count limit (max 50)
+        $currentCount = Category::count();
+        for ($i = $currentCount + 1; $i <= 50; $i++) {
+            Category::create([
+                'name' => 'Kategori Demo '.$i,
+                'slug' => 'kategori-demo-'.$i,
+            ]);
+        }
+        $this->assertEquals(50, Category::count());
+
+        // Attempting to add 51st category must be rejected
+        $response51 = $this->actingAs($admin)->post('/admin/kategori', [
+            'name' => 'Kategori Ke 51',
+            'description' => 'Deskripsi',
+        ]);
+        $response51->assertSessionHas('error');
+        $this->assertEquals(50, Category::count());
+    }
+
+    public function test_book_title_author_publisher_max_50_chars(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        // 1. Title > 50 chars rejected
+        $resLongTitle = $this->actingAs($admin)->post('/admin/buku', [
+            'title' => str_repeat('T', 51),
+            'author' => 'Penulis Valid',
+            'price' => 50000,
+            'stock' => 10,
+        ]);
+        $resLongTitle->assertSessionHasErrors('title');
+
+        // 2. Author > 50 chars rejected
+        $resLongAuthor = $this->actingAs($admin)->post('/admin/buku', [
+            'title' => 'Judul Valid',
+            'author' => str_repeat('P', 51),
+            'price' => 50000,
+            'stock' => 10,
+        ]);
+        $resLongAuthor->assertSessionHasErrors('author');
+
+        // 3. Publisher > 50 chars rejected
+        $resLongPublisher = $this->actingAs($admin)->post('/admin/buku', [
+            'title' => 'Judul Valid Lain',
+            'author' => 'Penulis Valid',
+            'publisher' => str_repeat('M', 51),
+            'price' => 50000,
+            'stock' => 10,
+        ]);
+        $resLongPublisher->assertSessionHasErrors('publisher');
+
+        // 4. Exactly 50 chars accepted
+        $resValid = $this->actingAs($admin)->post('/admin/buku', [
+            'title' => str_repeat('X', 50),
+            'author' => str_repeat('Y', 50),
+            'publisher' => str_repeat('Z', 50),
+            'price' => 75000,
+            'stock' => 15,
+        ]);
+        $resValid->assertSessionHasNoErrors();
+        $this->assertDatabaseHas('books', [
+            'title' => str_repeat('X', 50),
+            'author' => str_repeat('Y', 50),
+            'publisher' => str_repeat('Z', 50),
+        ]);
+    }
+
+    public function test_guest_accessing_any_role_route_via_url_returns_401_unauthorized(): void
+    {
+        // 1. Guest accesses admin routes -> 401 Unauthorized
+        $guestAdminDashboard = $this->get('/admin/dashboard');
+        $guestAdminDashboard->assertStatus(401);
+        $guestAdminDashboard->assertSee('Unauthorized');
+
+        $guestAdminRoot = $this->get('/admin');
+        $guestAdminRoot->assertStatus(401);
+        $guestAdminRoot->assertSee('Unauthorized');
+
+        // 2. Guest accesses customer routes -> 401 Unauthorized
+        $guestDashboard = $this->get('/dashboard');
+        $guestDashboard->assertStatus(401);
+        $guestDashboard->assertSee('Unauthorized');
+
+        $guestCart = $this->get('/keranjang');
+        $guestCart->assertStatus(401);
+        $guestCart->assertSee('Unauthorized');
+
+        $guestCheckout = $this->get('/checkout');
+        $guestCheckout->assertStatus(401);
+        $guestCheckout->assertSee('Unauthorized');
+
+        $guestOrders = $this->get('/pesanan');
+        $guestOrders->assertStatus(401);
+        $guestOrders->assertSee('Unauthorized');
+
+        $guestChat = $this->get('/chat');
+        $guestChat->assertStatus(401);
+        $guestChat->assertSee('Unauthorized');
+    }
+
+    public function test_admin_accessing_customer_routes_via_url_returns_403_forbidden(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+
+        // Admin navigates via URL to customer-only pages -> 403 Forbidden
+        $responseDashboard = $this->actingAs($admin)->get('/dashboard');
+        $responseDashboard->assertStatus(403);
+        $responseDashboard->assertSee('403');
+        $responseDashboard->assertSee('Access Denied');
+
+        $responseCart = $this->actingAs($admin)->get('/keranjang');
+        $responseCart->assertStatus(403);
+        $responseCart->assertSee('403');
+
+        $responseCheckout = $this->actingAs($admin)->get('/checkout');
+        $responseCheckout->assertStatus(403);
+        $responseCheckout->assertSee('403');
+
+        $responseOrders = $this->actingAs($admin)->get('/pesanan');
+        $responseOrders->assertStatus(403);
+        $responseOrders->assertSee('403');
+
+        $responseChat = $this->actingAs($admin)->get('/chat');
+        $responseChat->assertStatus(403);
+        $responseChat->assertSee('403');
+    }
+
+    public function test_customer_accessing_admin_routes_via_url_returns_403_forbidden(): void
+    {
+        $customer = User::where('role', 'user')->first();
+
+        // Customer navigates via URL to admin pages -> 403 Forbidden
+        $response = $this->actingAs($customer)->get('/admin/dashboard');
+        $response->assertStatus(403);
+        $response->assertSee('Access Denied');
+    }
+
+    public function test_accessing_non_existent_url_returns_404_not_found(): void
+    {
+        $response = $this->get('/halaman-ngasal-yang-pasti-tidak-ada-12345');
+        $response->assertStatus(404);
+        $response->assertSee('404');
+        $response->assertSee('Halaman Tidak Ditemukan');
     }
 
     public function test_chat_between_user_and_admin(): void
@@ -351,5 +502,43 @@ class BookStoreWorkflowTest extends TestCase
         $html = view('pagination.custom', ['paginator' => $paginator, 'elements' => [$paginator->getUrlRange(1, 4)]])->render();
         $this->assertStringContainsString('custom-pagination-nav', $html);
         $this->assertStringContainsString('custom-page-link', $html);
+    }
+
+    public function test_book_cards_contain_both_detail_and_cart_buttons_and_detail_page_renders_redesigned_layout(): void
+    {
+        $book = Book::where('is_active', true)->where('stock', '>', 5)->first();
+
+        // 1. Home page book cards have both Detail and Keranjang buttons
+        $homeRes = $this->get('/');
+        $homeRes->assertStatus(200);
+        $homeRes->assertSee('btn-card-detail', false);
+        $homeRes->assertSee('btn-card-cart', false);
+        $homeRes->assertSee('Keranjang');
+
+        // 2. Catalog page book cards have both Detail and Keranjang buttons
+        $catalogRes = $this->get('/buku');
+        $catalogRes->assertStatus(200);
+        $catalogRes->assertSee('btn-card-detail', false);
+        $catalogRes->assertSee('btn-card-cart', false);
+        $catalogRes->assertSee('Keranjang');
+
+        // 3. User can add directly to cart from outside card without going to detail
+        $user = User::where('role', 'user')->first();
+        $addToCartRes = $this->actingAs($user)->post('/keranjang/tambah/'.$book->id);
+        $addToCartRes->assertRedirect('/keranjang');
+
+        $cartItem = Cart::where('user_id', $user->id)->where('book_id', $book->id)->first();
+        $this->assertNotNull($cartItem);
+        $this->assertEquals(1, $cartItem->quantity);
+
+        // 4. Book detail page renders modern redesigned aesthetic layout
+        $detailRes = $this->get('/buku/'.$book->slug);
+        $detailRes->assertStatus(200);
+        $detailRes->assertSee('detail-container', false);
+        $detailRes->assertSee('detail-breadcrumb', false);
+        $detailRes->assertSee('Spesifikasi Buku');
+        $detailRes->assertSee('Sinopsis &amp; Deskripsi', false);
+        $detailRes->assertSee('detail-btn-cart', false);
+        $detailRes->assertSee('Tambah ke Keranjang');
     }
 }

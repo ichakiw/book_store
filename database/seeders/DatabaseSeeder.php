@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Book;
 use App\Models\Category;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -31,7 +30,7 @@ class DatabaseSeeder extends Seeder
         $user = User::firstOrCreate(
             ['email' => 'user@bookstore.com'],
             [
-                'name' => 'Budi Santoso',
+                'name' => 'Budi Santosol',
                 'password' => Hash::make('password'),
                 'role' => 'user',
                 'phone' => '089876543210',
@@ -95,7 +94,7 @@ class DatabaseSeeder extends Seeder
         $makeCover = function (string $title, string $author, string $color1, string $color2, string $slug) {
             $path = "covers/{$slug}.svg";
             $fullPath = storage_path("app/public/{$path}");
-            
+
             // Clean title for display
             $displayTitle = htmlspecialchars(Str::limit($title, 36));
             $displayAuthor = htmlspecialchars(Str::limit($author, 28));
@@ -151,6 +150,7 @@ class DatabaseSeeder extends Seeder
 </svg>
 SVG;
             file_put_contents($fullPath, $svg);
+
             return $path;
         };
 
@@ -414,7 +414,7 @@ SVG;
             $grandTotal = $subtotal + $shippingCost;
 
             $order = Order::create([
-                'order_number' => 'INV-' . date('Ymd') . '-000' . ($idx + 1),
+                'order_number' => 'INV-'.date('Ymd').'-000'.($idx + 1),
                 'user_id' => $user->id,
                 'total_amount' => $subtotal,
                 'shipping_cost' => $shippingCost,

@@ -41,6 +41,12 @@
                         <div class="form-hint">Hanya angka, minimal 10 digit. Digunakan untuk konfirmasi pengiriman pesanan.</div>
                     </div>
 
+                    <!-- <div class="form-group">
+                        <label class="form-label required">Nomor Induk / nik</label>
+                        <input type="text" name="nik" value="{{ old('nik') }}" class="form-control" placeholder="masukan 16 digit NIK" inputmode="numeric" pattern="[0-9]{16}" minlength="16" maxlength="16" required>
+                        <div class="form-hint">Hanya angka, minimal 16 digit. Digunakan untuk konfirmasi identitas.</div>
+                    </div> -->
+
                     <div class="form-group">
                         <label class="form-label required">Alamat Pengiriman Default</label>
                         <textarea name="address" rows="2" class="form-control" placeholder="Nama Jalan, Nomor Rumah, RT/RW, Kecamatan, Kota" required>{{ old('address') }}</textarea>

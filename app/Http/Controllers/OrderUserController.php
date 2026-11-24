@@ -171,13 +171,17 @@ class OrderUserController extends Controller
 
     public function invoice(string $orderNumber): View
     {
+        if (! Auth::check()) {
+            abort(401, 'Unauthorized: Silakan login terlebih dahulu untuk mengakses invoice.');
+        }
+
         $order = Order::with(['items.book', 'user'])
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
-        // Check permission if authenticated: admin can view any invoice, regular user only their own
-        if (Auth::check() && ! Auth::user()->isAdmin() && $order->user_id !== Auth::id()) {
-            abort(403, 'Anda tidak memiliki hak akses untuk melihat invoice pesanan ini.');
+        // Check permission: admin can view any invoice, regular user only their own
+        if (! Auth::user()->isAdmin() && $order->user_id !== Auth::id()) {
+            abort(403, 'Access Denied: Anda tidak memiliki hak akses untuk melihat invoice pesanan ini.');
         }
 
         return view('store.orders.invoice', compact('order'));

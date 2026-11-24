@@ -198,7 +198,25 @@
 
                         <div class="bestseller-foot">
                             <div class="bestseller-price">{{ $book->formatted_price }}</div>
-                            <a href="{{ route('books.show', $book->slug) }}" class="bestseller-btn">Lihat Buku</a>
+                        </div>
+                        <div class="catalog-card-actions">
+                            <a href="{{ route('books.show', $book->slug) }}" class="btn-card-detail">
+                                Detail
+                            </a>
+                            @if($book->stock > 0)
+                                <form action="{{ route('cart.add', $book->id) }}" method="POST" class="card-cart-form">
+                                    @csrf
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn-card-cart" title="Tambah ke Keranjang">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                        <span>Keranjang</span>
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" class="btn-card-cart is-disabled" disabled title="Stok Habis">
+                                    <span>Habis</span>
+                                </button>
+                            @endif
                         </div>
                     </article>
                 @endforeach
@@ -224,22 +242,38 @@
 
             <div class="catalog-grid">
                 @foreach($featuredBooks as $book)
-                    <article class="catalog-card" style="background: #ffffff; padding: 14px; border: 1px solid var(--h-line); border-radius: 18px; transition: transform .2s, box-shadow .2s;">
-                        <a href="{{ route('books.show', $book->slug) }}" class="catalog-card-cover" style="box-shadow: 0 4px 12px -4px rgba(15,23,42,0.12);">
+                    <article class="catalog-card">
+                        <a href="{{ route('books.show', $book->slug) }}" class="catalog-card-cover">
                             <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" loading="lazy">
                             @if($book->stock <= 0)
-                                <span class="catalog-card-flag" style="background: rgba(220, 38, 38, 0.88);">Habis</span>
-                            @else
-                                <span class="catalog-card-flag" style="background: rgba(15, 23, 42, 0.75);">Tersedia</span>
+                                <span class="catalog-card-flag is-out">Habis</span>
                             @endif
                         </a>
-                        <div class="catalog-card-body" style="padding-top: 12px;">
+                        <div class="catalog-card-body">
                             <p class="catalog-card-meta">{{ $book->category?->name ?? 'Umum' }}</p>
                             <a href="{{ route('books.show', $book->slug) }}" class="catalog-card-title">{{ $book->title }}</a>
                             <p class="catalog-card-author">{{ $book->author }}</p>
-                            <div class="catalog-card-foot" style="padding-top: 10px; border-top: 1px solid #f1f5f9;">
+                            <div class="catalog-card-foot">
                                 <span class="catalog-card-price">{{ $book->formatted_price }}</span>
-                                <a href="{{ route('books.show', $book->slug) }}" class="catalog-card-link">Detail</a>
+                            </div>
+                            <div class="catalog-card-actions">
+                                <a href="{{ route('books.show', $book->slug) }}" class="btn-card-detail">
+                                    Detail
+                                </a>
+                                @if($book->stock > 0)
+                                    <form action="{{ route('cart.add', $book->id) }}" method="POST" class="card-cart-form">
+                                        @csrf
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn-card-cart" title="Tambah ke Keranjang">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                                            <span>Keranjang</span>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" class="btn-card-cart is-disabled" disabled title="Stok Habis">
+                                        <span>Habis</span>
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </article>

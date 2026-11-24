@@ -38,10 +38,13 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 });
 
-// Authenticated User & Shared Routes
+// Authenticated Shared Routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
 
+// Customer Dedicated Routes (Customers only; Admins blocked with 403, Guests blocked with 401)
+Route::middleware(['customer'])->group(function () {
     // Customer Dashboard & Profile
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('user.dashboard');
     Route::put('/dashboard/profile', [UserDashboardController::class, 'updateProfile'])->name('user.profile.update');
@@ -76,6 +79,7 @@ Route::get('/pesanan/{orderNumber}/invoice', [OrderUserController::class, 'invoi
 
 // Admin Dedicated Routes
 Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn () => redirect()->route('admin.dashboard'))->name('home');
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Book Management

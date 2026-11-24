@@ -44,6 +44,7 @@ class UserDashboardController extends Controller
             'address' => ['required', 'string', 'max:500'],
             'current_password' => ['nullable', 'required_with:password', 'current_password'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'nik' => ['required', 'string', 'regex:/^[0-9]+$/', 'min:10', 'max:20'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
@@ -55,6 +56,8 @@ class UserDashboardController extends Controller
             'current_password.current_password' => 'Password saat ini salah.',
             'password.min' => 'Password baru minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+            'nik.regex' => 'Nomor nik harus berupa angka.',
+            'nik.min' => 'Nomor nik minimal 16 angka.',
         ]);
 
         $userData = [

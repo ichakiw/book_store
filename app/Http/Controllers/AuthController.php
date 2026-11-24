@@ -22,18 +22,19 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request): RedirectResponse
+public function login(Request $request): RedirectResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'string', 'max:255'],
+            //'name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'email.required' => 'Nama lengkap wajib diisi.',
+            //'name.required' => 'Nama lengkap wajib diisi.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->boolean('remember'))) {
             $user = Auth::user();
 
             if (!$user->isActive()) {
@@ -43,6 +44,7 @@ class AuthController extends Controller
 
                 return back()->withErrors([
                     'email' => 'Akun Anda dinonaktifkan oleh Administrator.',
+                    //'name' => 'Akun Anda dinonaktifkan oleh Administrator.',
                 ])->onlyInput('email');
             }
 
@@ -58,8 +60,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Kombinasi email dan password tidak sesuai.',
-        ])->onlyInput('email');
+            'name' => 'Kombinasi nama lengkap dan password tidak sesuai.',
+        ])->onlyInput('name');
     }
 
     public function showRegister(): View|RedirectResponse
@@ -75,13 +77,17 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
+            //'nik' => ['required', 'digits:16', 'unique:users,nik'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['required', 'regex:/^[0-9]+$/', 'min:10'],
             'address' => ['required', 'string', 'max:500'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.regex' => 'Nama lengkap hanya boleh berisi huruf dan spasi.',
+            //'nik.required' => 'Nomor induk / nik wajib diisi.',
+            //'nik.digits' => 'Nomor induk / nik harus terdiri dari 16 digit angka.',
             'email.required' => 'Alamat email wajib diisi.',
             'email.unique' => 'Email ini sudah terdaftar.',
             'phone.required' => 'Nomor WhatsApp / telepon wajib diisi.',
@@ -91,16 +97,21 @@ class AuthController extends Controller
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal terdiri dari 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            
+            
         ]);
 
         $user = User::create([
             'name' => $validated['name'],
+            'nik' => $validated['nik'],
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'address' => $validated['address'],
+            'nik' => $validated['nik'],
             'role' => 'user',
             'status' => 'active',
             'password' => Hash::make($validated['password']),
+            
         ]);
 
         Auth::login($user);
@@ -114,6 +125,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
 
         return redirect()->route('login')
             ->with('success', 'Anda telah berhasil logout.');

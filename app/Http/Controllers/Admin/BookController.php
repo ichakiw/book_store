@@ -55,12 +55,12 @@ class BookController extends Controller
             'title' => [
                 'required',
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('books', 'title')->withoutTrashed(),
             ],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'author' => ['required', 'string', 'max:255'],
-            'publisher' => ['nullable', 'string', 'max:255'],
+            'author' => ['required', 'string', 'max:50'],
+            'publisher' => ['nullable', 'string', 'max:50'],
             'isbn' => [
                 'nullable',
                 'string',
@@ -76,9 +76,13 @@ class BookController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ], [
             'title.required' => 'Judul buku wajib diisi.',
+            'title.max' => 'Judul/nama buku maksimal 50 karakter/huruf.',
             'title.unique' => 'Buku dengan judul ini sudah terdaftar. Tidak boleh menambahkan buku dengan judul yang sama/duplikat.',
             'isbn.unique' => 'Nomor ISBN ini sudah digunakan oleh buku lain.',
+            'isbn.max' => 'Nomor ISBN maksimal 50 karakter.',
             'author.required' => 'Nama penulis/pengarang wajib diisi.',
+            'author.max' => 'Nama penulis/pengarang buku maksimal 50 karakter/huruf.',
+            'publisher.max' => 'Nama penerbit buku maksimal 50 karakter/huruf.',
             'price.required' => 'Harga buku wajib diisi.',
             'stock.required' => 'Jumlah stok awal wajib diisi.',
         ]);
@@ -128,12 +132,12 @@ class BookController extends Controller
             'title' => [
                 'required',
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('books', 'title')->ignore($book->id)->withoutTrashed(),
             ],
             'category_id' => ['nullable', 'exists:categories,id'],
-            'author' => ['required', 'string', 'max:255'],
-            'publisher' => ['nullable', 'string', 'max:255'],
+            'author' => ['required', 'string', 'max:50'],
+            'publisher' => ['nullable', 'string', 'max:50'],
             'isbn' => [
                 'nullable',
                 'string',
@@ -149,9 +153,13 @@ class BookController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ], [
             'title.required' => 'Judul buku wajib diisi.',
+            'title.max' => 'Judul/nama buku maksimal 50 karakter/huruf.',
             'title.unique' => 'Buku dengan judul ini sudah terdaftar pada buku lain.',
             'isbn.unique' => 'Nomor ISBN ini sudah terdaftar pada buku lain.',
+            'isbn.max' => 'Nomor ISBN maksimal 50 karakter.',
             'author.required' => 'Nama penulis/pengarang wajib diisi.',
+            'author.max' => 'Nama penulis/pengarang buku maksimal 50 karakter/huruf.',
+            'publisher.max' => 'Nama penerbit buku maksimal 50 karakter/huruf.',
             'price.required' => 'Harga buku wajib diisi.',
             'stock.required' => 'Jumlah stok awal wajib diisi.',
         ]);

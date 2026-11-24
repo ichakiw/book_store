@@ -34,16 +34,22 @@
                 </ul>
 
                 @auth
-                    <!-- Cart Button with Counter -->
-                    @php
-                        $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity');
-                    @endphp
-                    <a href="{{ route('cart.index') }}" class="cart-btn" title="Keranjang Belanja">
-                        🛒
-                        @if($cartCount > 0)
-                            <span class="cart-badge">{{ $cartCount }}</span>
-                        @endif
-                    </a>
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline btn-sm" style="color: var(--primary); border-color: var(--primary); font-weight: 700;">
+                            ⚙️ Panel Admin
+                        </a>
+                    @else
+                        <!-- Cart Button with Counter -->
+                        @php
+                            $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity');
+                        @endphp
+                        <a href="{{ route('cart.index') }}" class="cart-btn" title="Keranjang Belanja">
+                            🛒
+                            @if($cartCount > 0)
+                                <span class="cart-badge">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                    @endif
 
                     <!-- User Dropdown Menu -->
                     <div class="user-menu">
@@ -62,32 +68,41 @@
 
                             @if(auth()->user()->isAdmin())
                                 <a href="{{ route('admin.dashboard') }}" class="dropdown-item" style="color: var(--primary); font-weight: 700;">
-                                    ⚙️ Panel Administrator
+                                    ⚙️ Dashboard Admin
                                 </a>
-                                <div class="dropdown-divider"></div>
+                                <a href="{{ route('admin.books.index') }}" class="dropdown-item">
+                                    📚 Kelola Buku
+                                </a>
+                                <a href="{{ route('admin.orders.index') }}" class="dropdown-item">
+                                    📦 Kelola Pesanan
+                                </a>
+                                <a href="{{ route('admin.chat.index') }}" class="dropdown-item">
+                                    💬 Live Chat Pelanggan
+                                </a>
+                            @else
+                                <a href="{{ route('user.dashboard') }}" class="dropdown-item">
+                                    👤 Akun &amp; Profil
+                                </a>
+                                <a href="{{ route('chat.index') }}" class="dropdown-item">
+                                    💬 Chat dengan Admin
+                                </a>
+                                <a href="{{ route('orders.index') }}" class="dropdown-item">
+                                    📦 Riwayat Pesanan
+                                </a>
+                                <a href="{{ route('cart.index') }}" class="dropdown-item">
+                                    🛒 Keranjang Belanja
+                                </a>
                             @endif
 
-                            <a href="{{ route('user.dashboard') }}" class="dropdown-item">
-                                👤 Akun &amp; Profil
-                            </a>
-                            <a href="{{ route('chat.index') }}" class="dropdown-item">
-                                💬 Chat dengan Admin
-                            </a>
-                            <a href="{{ route('orders.index') }}" class="dropdown-item">
-                                📦 Riwayat Pesanan
-                            </a>
-                            <a href="{{ route('cart.index') }}" class="dropdown-item">
-                                🛒 Keranjang Belanja
-                            </a>
-
                             <div class="dropdown-divider"></div>
-                            
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="dropdown-item" style="width: 100%; border: none; background: none; cursor: pointer; text-align: left; color: var(--danger);">
-                                    🚪 Keluar (Logout)
-                                </button>
-                            </form>
+                            <form action="{{ route('logout') }}" method="POST"
+         style="margin: 0;"
+         onsubmit="return confirm('Yakin ingin logout dari akun ini?');">
+    @csrf
+    <button type="submit" class="btn btn-sm btn-outline-danger" title="Logout">
+        🚪 Keluar
+    </button>
+</form>
                         </div>
                     </div>
                 @else
@@ -167,13 +182,37 @@
                 </div>
 
                 <div>
-                    <h4>Hubungi Kami</h4>
-                    <p style="font-size: 0.88rem; margin-bottom: 8px;">📍 Jakarta Pusat, DKI Jakarta</p>
-                    <p style="font-size: 0.88rem; margin-bottom: 8px;">📞 WhatsApp: 0812-3456-7890</p>
-                    <p style="font-size: 0.88rem; margin-bottom: 8px;">✉️ support@bookstore.id</p>
-                    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 12px;">Senin - Minggu: 08.00 - 21.00 WIB</p>
-                </div>
-            </div>
+    <h4>Hubungi Kami</h4>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">
+        📍 Jakarta Pusat, Kemayoran, kebon kosong Indonesia
+    </p>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">
+        📱
+        <a href="https://wa.me/6282114258300" target="_blank" rel="noopener noreferrer">
+            0821-1425-8300
+        </a>
+    </p>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">
+        📷
+        <a href="https://www.instagram.com/iichqq/" target="_blank" rel="noopener noreferrer">
+            @iichqq
+        </a>
+    </p>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">
+        ✉️
+        <a href="mailto:nabilaavisha2503@gmail.com">
+            nabilaavisha2503@gmail.com
+        </a>
+    </p>
+
+    <p style="font-size: 0.82rem; color: var(--text-light); margin-top: 12px;">
+        Senin - Minggu: 08.00 - 21.00 WIB
+    </p>
+</div>
 
             <div class="footer-bottom">
                 <div>&copy; {{ date('Y') }} BookStore Indonesia. All rights reserved.</div>
@@ -185,6 +224,7 @@
         </div>
     </footer>
 
+    @if(!auth()->check() || !auth()->user()->isAdmin())
     <!-- Floating Chat Widget -->
     <div id="floatingChatBox" style="position: fixed; bottom: 88px; right: 24px; width: 360px; height: 500px; max-width: calc(100vw - 32px); background: #ffffff; border-radius: 20px; box-shadow: 0 20px 50px -10px rgba(15,23,42,0.28); border: 1px solid var(--border); display: none; flex-direction: column; z-index: 1000; overflow: hidden;">
         <!-- Widget Header -->
@@ -252,11 +292,13 @@
             @endif
         @endauth
     </div>
+    @endif
 
     @stack('scripts')
     <script>
         function toggleFloatingChat() {
             var box = document.getElementById('floatingChatBox');
+            if (!box) return;
             if (box.style.display === 'flex') {
                 box.style.display = 'none';
             } else {

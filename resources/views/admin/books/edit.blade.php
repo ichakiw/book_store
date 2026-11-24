@@ -34,8 +34,8 @@
                 @method('PUT')
 
                 <div class="form-group">
-                    <label class="form-label required">Judul Buku</label>
-                    <input type="text" name="title" value="{{ old('title', $book->title) }}" class="form-control" required autofocus>
+                    <label class="form-label required">Judul Buku <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                    <input type="text" name="title" value="{{ old('title', $book->title) }}" maxlength="50" class="form-control" required autofocus>
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -52,32 +52,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label required">Penulis / Pengarang</label>
-                        <input type="text" name="author" value="{{ old('author', $book->author) }}" class="form-control" required>
+                        <label class="form-label required">Penulis / Pengarang <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                        <input type="text" name="author" value="{{ old('author', $book->author) }}" maxlength="50" class="form-control" required>
                     </div>
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">Penerbit</label>
-                        <input type="text" name="publisher" value="{{ old('publisher', $book->publisher) }}" class="form-control">
+                        <label class="form-label">Penerbit <span class="text-xs text-muted font-normal">(Maks. 50 huruf)</span></label>
+                        <input type="text" name="publisher" value="{{ old('publisher', $book->publisher) }}" maxlength="50" class="form-control">
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label class="form-label">Nomor ISBN</label>
-                        <input type="text" name="isbn" value="{{ old('isbn', $book->isbn) }}" class="form-control">
-                    </div>
+                        <input type="text" name="isbn" value="{{ old('isbn', $book->isbn) }}" maxlength="50" class="form-control">
+                    </div> -->
                 </div>
 
                 <div class="d-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;">
                     <div class="form-group">
                         <label class="form-label required">Harga (Rp)</label>
                         <input type="number" name="price" value="{{ old('price', $book->price) }}" min="0" step="1000" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label required">Jumlah Stok</label>
-                        <input type="number" name="stock" value="{{ old('stock', $book->stock) }}" min="0" class="form-control" required>
                     </div>
 
                     <div class="form-group">
