@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\QrCodeService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -58,24 +59,25 @@ class Order extends Model
 
     public function getFormattedTotalAmountAttribute(): string
     {
-        return 'Rp ' . number_format($this->total_amount, 0, ',', '.');
+        return 'Rp '.number_format($this->total_amount, 0, ',', '.');
     }
 
     public function getFormattedShippingCostAttribute(): string
     {
-        return 'Rp ' . number_format($this->shipping_cost, 0, ',', '.');
+        return 'Rp '.number_format($this->shipping_cost, 0, ',', '.');
     }
 
     public function getFormattedGrandTotalAttribute(): string
     {
-        return 'Rp ' . number_format($this->grand_total, 0, ',', '.');
+        return 'Rp '.number_format($this->grand_total, 0, ',', '.');
     }
 
     public function getPaymentProofUrlAttribute(): ?string
     {
         if ($this->payment_proof && Storage::disk('public')->exists($this->payment_proof)) {
-            return asset('storage/' . $this->payment_proof);
+            return asset('storage/'.$this->payment_proof);
         }
+
         return null;
     }
 
@@ -107,10 +109,29 @@ class Order extends Model
         };
     }
 
+    public function isQris(): bool
+    {
+        return strcasecmp($this->payment_method ?? '', 'QRIS') === 0;
+    }
+
+    public function getQrisPayloadAttribute(): string
+    {
+        return QrCodeService::generateQrisPayload(
+            $this->order_number,
+            $this->grand_total
+        );
+    }
+
+    public function getQrisSvgAttribute(): string
+    {
+        return QrCodeService::generateSvg($this->qris_payload);
+    }
+
     public static function generateOrderNumber(): string
     {
         $date = date('Ymd');
         $random = strtoupper(substr(bin2hex(random_bytes(3)), 0, 5));
+
         return "INV-{$date}-{$random}";
     }
 }

@@ -144,7 +144,12 @@
                 <div class="d-grid mb-3" style="grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div>
                         <div class="text-xs text-muted font-bold uppercase">Metode Pembayaran</div>
-                        <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);">{{ $order->payment_method }}</div>
+                        <div style="font-weight: 700; font-size: 1.05rem; color: var(--text-main);" class="d-flex align-center gap-2">
+                            @if($order->isQris())
+                                <span class="badge" style="background: #fee2e2; color: #dc2626; font-weight: 800; border: 1px solid #fca5a5;">QRIS</span>
+                            @endif
+                            <span>{{ $order->payment_method }}</span>
+                        </div>
                         <div class="text-xs text-muted mt-1">Total Tagihan: <strong style="color: var(--primary); font-size: 1rem;">{{ $order->formatted_grand_total }}</strong></div>
                     </div>
                     <div>

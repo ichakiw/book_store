@@ -118,10 +118,10 @@
                                     <input type="radio" name="payment_method" value="QRIS" style="accent-color: var(--primary); width: 20px; height: 20px;">
                                     <div>
                                         <div style="font-weight: 700; color: var(--text-main);">QRIS (Semua E-Wallet &amp; Mobile Banking)</div>
-                                        <div class="text-xs text-muted">Gopay, OVO, Dana, ShopeePay, LinkAja</div>
+                                        <div class="text-xs text-muted">Scan Kode QR via GoPay, OVO, DANA, ShopeePay, BCA, Livin', BRImo, dll. Kode QRIS langsung ditampilkan untuk di-scan.</div>
                                     </div>
                                 </div>
-                                <div class="bank-logo-badge" style="color: #d97706; background-color: #fffbeb;">QRIS</div>
+                                <div class="bank-logo-badge" style="color: #dc2626; background-color: #fee2e2; font-weight: 900;">QRIS</div>
                             </label>
                         </div>
                     </div>

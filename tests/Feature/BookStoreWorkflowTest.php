@@ -541,4 +541,60 @@ class BookStoreWorkflowTest extends TestCase
         $detailRes->assertSee('detail-btn-cart', false);
         $detailRes->assertSee('Tambah ke Keranjang');
     }
+
+    public function test_qris_payment_method_displays_qr_code_and_not_bank_transfer_numbers(): void
+    {
+        $user = User::where('role', 'user')->first();
+        $book = Book::where('is_active', true)->where('stock', '>=', 5)->first();
+
+        // 1. User adds book to cart
+        $this->actingAs($user)->post('/keranjang/tambah/'.$book->id, ['quantity' => 1]);
+
+        // 2. User checks out with QRIS
+        $checkoutResponse = $this->actingAs($user)->post('/checkout', [
+            'recipient_name' => 'Siti Nurhaliza',
+            'recipient_phone' => '081234567890',
+            'shipping_address' => 'Jl. Kebon Jeruk No. 8',
+            'city' => 'Jakarta Barat',
+            'postal_code' => '11530',
+            'payment_method' => 'QRIS',
+            'notes' => 'Tolong bubble wrap tebal',
+        ]);
+
+        $order = Order::where('recipient_name', 'Siti Nurhaliza')->first();
+        $this->assertNotNull($order);
+        $this->assertEquals('QRIS', $order->payment_method);
+        $this->assertTrue($order->isQris());
+
+        $checkoutResponse->assertRedirect("/pesanan/{$order->order_number}/pembayaran");
+
+        // 3. User views payment page
+        $paymentPageResponse = $this->actingAs($user)->get("/pesanan/{$order->order_number}/pembayaran");
+        $paymentPageResponse->assertStatus(200);
+
+        // QRIS Code elements MUST be present
+        $paymentPageResponse->assertSee('PEMBAYARAN QRIS NASIONAL');
+        $paymentPageResponse->assertSee('NMID: ID1020039482910');
+        $paymentPageResponse->assertSee('PT BOOK STORE INDONESIA');
+        $paymentPageResponse->assertSee('Unduh Kode QR (PNG)');
+        $paymentPageResponse->assertSee('Cara Membayar Menggunakan QRIS');
+        $paymentPageResponse->assertSee('<svg', false);
+
+        // Bank transfer numbers MUST NOT be shown for QRIS!
+        $paymentPageResponse->assertDontSee('Rekening Tujuan Transfer');
+        $paymentPageResponse->assertDontSee('8820 1928 331');
+        $paymentPageResponse->assertDontSee('137 00 2938 1029');
+        $paymentPageResponse->assertDontSee('0341 01 002938 501');
+
+        // Order detail page also shows QRIS information
+        $showPageResponse = $this->actingAs($user)->get("/pesanan/{$order->order_number}");
+        $showPageResponse->assertStatus(200);
+        $showPageResponse->assertSee('QRIS');
+        $showPageResponse->assertSee('Buka QRIS &amp; Upload Bukti', false);
+
+        // Invoice page shows QRIS section when waiting for payment
+        $invoiceResponse = $this->actingAs($user)->get("/pesanan/{$order->order_number}/invoice");
+        $invoiceResponse->assertStatus(200);
+        $invoiceResponse->assertSee('Scan QRIS Ini untuk Membayar via E-Wallet atau M-Banking');
+    }
 }

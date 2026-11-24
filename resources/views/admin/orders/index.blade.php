@@ -303,9 +303,15 @@
                                     {{ $o->formatted_grand_total }}
                                 </div>
                                 <div class="text-xs text-muted mt-1">
-                                    <span style="font-weight: 600; color: var(--text-main); background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">
-                                        {{ $o->payment_method }}
-                                    </span>
+                                    @if($o->isQris())
+                                        <span style="font-weight: 700; color: #dc2626; background: #fee2e2; padding: 2px 6px; border-radius: 4px; border: 1px solid #fca5a5;">
+                                            QRIS
+                                        </span>
+                                    @else
+                                        <span style="font-weight: 600; color: var(--text-main); background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">
+                                            {{ $o->payment_method }}
+                                        </span>
+                                    @endif
                                 </div>
                                 <div style="margin-top: 4px;">
                                     @if($o->stock_reduced)

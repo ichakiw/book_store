@@ -128,6 +128,21 @@
             </div>
         </div>
 
+        @if($order->isQris() && in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak']))
+            <div class="mb-4" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: var(--radius-sm); padding: 18px; text-align: center;">
+                <div class="d-flex align-center justify-center gap-2 mb-2">
+                    <span style="background: #dc2626; color: #ffffff; font-weight: 900; font-size: 0.85rem; padding: 2px 10px; border-radius: 4px;">QRIS</span>
+                    <strong style="color: var(--text-main); font-size: 0.95rem;">Scan QRIS Ini untuk Membayar via E-Wallet atau M-Banking</strong>
+                </div>
+                <div style="display: inline-block; background: #ffffff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px;">
+                    {!! \App\Services\QrCodeService::generateSvg($order->qris_payload, 180, 1) !!}
+                </div>
+                <div class="text-xs text-muted">
+                    NMID: ID1020039482910 • PT BOOK STORE INDONESIA • Nominal: {{ $order->formatted_grand_total }}
+                </div>
+            </div>
+        @endif
+
         <!-- Footer Notice -->
         <div class="text-center pt-4" style="border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted);">
             Terima kasih telah berbelanja di <strong>BookStore</strong>. Simpan invoice ini sebagai bukti pembelian resmi.

@@ -30,10 +30,6 @@
                         <input type="text" name="name" value="{{ old('name') }}" class="form-control" placeholder="Contoh: Budi Santoso" required autofocus>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label required">Alamat Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="nama@email.com" required>
-                    </div>
 
                     <div class="form-group">
                         <label class="form-label required">Nomor WhatsApp / HP</label>

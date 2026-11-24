@@ -39,7 +39,11 @@
             @if($order->status === 'menunggu_pembayaran' || $order->status === 'pembayaran_ditolak')
                 <div>
                     <a href="{{ route('orders.payment', $order->order_number) }}" class="btn btn-primary btn-sm" style="box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);">
-                        💳 Bayar &amp; Upload Bukti Transfer →
+                        @if($order->isQris())
+                            📱 Buka Kode QRIS &amp; Bayar →
+                        @else
+                            💳 Bayar &amp; Upload Bukti Transfer →
+                        @endif
                     </a>
                 </div>
             @endif
@@ -256,13 +260,32 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <div class="text-xs text-muted font-bold uppercase mb-1">Metode Pembayaran</div>
-                        <div style="font-weight: 700; font-size: 0.98rem; color: var(--text-main);">
-                            {{ $order->payment_method }}
-                        </div>
+                        @if($order->isQris())
+                            <div class="d-flex align-center gap-2">
+                                <span class="badge" style="background: #fee2e2; color: #dc2626; font-weight: 800; border: 1px solid #fca5a5;">
+                                    QRIS
+                                </span>
+                                <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">E-Wallet &amp; M-Banking</span>
+                            </div>
+                        @else
+                            <div style="font-weight: 700; font-size: 0.98rem; color: var(--text-main);">
+                                {{ $order->payment_method }}
+                            </div>
+                        @endif
                     </div>
 
+                    @if($order->isQris() && in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak']))
+                        <div class="mb-3" style="text-align: center; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px;">
+                            <div class="text-xs text-muted font-bold mb-2">Scan Kode QRIS:</div>
+                            <div style="display: inline-block; background: #ffffff; padding: 6px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                {!! \App\Services\QrCodeService::generateSvg($order->qris_payload, 160, 1) !!}
+                            </div>
+                            <div class="text-xs text-muted mt-2">NMID: ID1020039482910</div>
+                        </div>
+                    @endif
+
                     <div class="mb-3">
-                        <div class="text-xs text-muted font-bold uppercase mb-1">Bukti Transfer</div>
+                        <div class="text-xs text-muted font-bold uppercase mb-1">Bukti Pembayaran</div>
                         @if($order->payment_proof_url)
                             <div style="margin-top: 8px;">
                                 <a href="{{ $order->payment_proof_url }}" target="_blank" style="display: block; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-xs);">
@@ -280,7 +303,11 @@
                     @if(in_array($order->status, ['menunggu_pembayaran', 'pembayaran_ditolak']))
                         <div class="mt-3">
                             <a href="{{ route('orders.payment', $order->order_number) }}" class="btn btn-primary btn-block btn-sm">
-                                📤 Upload Bukti Pembayaran
+                                @if($order->isQris())
+                                    📱 Buka QRIS &amp; Upload Bukti →
+                                @else
+                                    📤 Upload Bukti Pembayaran
+                                @endif
                             </a>
                         </div>
                     @endif

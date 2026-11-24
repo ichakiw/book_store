@@ -68,29 +68,43 @@ class OrderUserController extends Controller
             ->where('order_number', $orderNumber)
             ->firstOrFail();
 
-        // Bank details
+        $isQris = $order->isQris();
+
+        // Bank details for bank transfer method
         $bankAccounts = [
             [
                 'bank' => 'Bank Central Asia (BCA)',
                 'number' => '8820 1928 331',
                 'name' => 'PT BOOK STORE INDONESIA',
                 'code' => '014',
+                'key' => 'BCA',
             ],
             [
                 'bank' => 'Bank Mandiri',
                 'number' => '137 00 2938 1029',
                 'name' => 'PT BOOK STORE INDONESIA',
                 'code' => '008',
+                'key' => 'Mandiri',
             ],
             [
                 'bank' => 'Bank Rakyat Indonesia (BRI)',
                 'number' => '0341 01 002938 501',
                 'name' => 'PT BOOK STORE INDONESIA',
                 'code' => '002',
+                'key' => 'BRI',
             ],
         ];
 
-        return view('store.orders.payment', compact('order', 'bankAccounts'));
+        $selectedBank = null;
+        if (str_contains($order->payment_method, 'BCA')) {
+            $selectedBank = 'BCA';
+        } elseif (str_contains($order->payment_method, 'Mandiri')) {
+            $selectedBank = 'Mandiri';
+        } elseif (str_contains($order->payment_method, 'BRI')) {
+            $selectedBank = 'BRI';
+        }
+
+        return view('store.orders.payment', compact('order', 'isQris', 'bankAccounts', 'selectedBank'));
     }
 
     public function uploadPaymentProof(Request $request, string $orderNumber): RedirectResponse
